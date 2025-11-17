@@ -8,4 +8,9 @@
     <UseWPF>true</UseWPF>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\MyDailyWorkSystem.Core\MyDailyWorkSystem.Core.csproj" />
+    <ProjectReference Include="..\MyDailyWorkSystem.Data\MyDailyWorkSystem.Data.csproj" />
+  </ItemGroup>
+
 </Project>
