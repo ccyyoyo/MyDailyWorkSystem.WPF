@@ -1,0 +1,6 @@
+<Solution>
+  <Project Path="MyDailyWorkSystem.Core/MyDailyWorkSystem.Core.csproj" Id="a3e13680-2725-4de7-ae43-48c5cd5602b2" />
+  <Project Path="MyDailyWorkSystem.Data/MyDailyWorkSystem.Data.csproj" Id="107fa73e-5eae-4665-842b-1d7b9468e84f" />
+  <Project Path="MyDailyWorkSystem.Domain/MyDailyWorkSystem.Domain.csproj" Id="ce23559e-c517-4cf3-bf7e-3b48dc97f40c" />
+  <Project Path="MyDailyWorkSystem.WPF/MyDailyWorkSystem.WPF.csproj" />
+</Solution>
