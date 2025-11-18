@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MyDailyWorkSystem.Domain.Enums;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -18,6 +19,7 @@ namespace MyDailyWorkSystem.Domain.Models
         public TaskType Type { get; set; }
         public TaskPriority Priority { get; set; }
         public TaskState State { get; set; }
+
         // Scheduling
         public DateTime? DueDate { get; set; }
 

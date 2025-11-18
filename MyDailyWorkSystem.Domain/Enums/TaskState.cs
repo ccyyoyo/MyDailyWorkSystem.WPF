@@ -1,4 +1,4 @@
-﻿namespace MyDailyWorkSystem.Domain.Models
+﻿namespace MyDailyWorkSystem.Domain.Enums
 {
     public enum TaskState
     {
