@@ -1,7 +1,5 @@
 ﻿using MyDailyWorkSystem.Domain.Enums;
-using System;
-using System.Collections.Generic;
-using System.Text;
+using System.Text.Json.Serialization;
 
 namespace MyDailyWorkSystem.Domain.Models
 {
@@ -30,8 +28,15 @@ namespace MyDailyWorkSystem.Domain.Models
         public Guid? ProjectId { get; set; }
         public Guid? CreatorUserId { get; set; }
         public Guid? AssignedToUserId { get; set; }
+        public string TagIdsJson { get; set; } = "[]";
+        public string AttachmentIdsJson { get; set; } = "[]";
+
+        [JsonIgnore]
         public List<Guid> TagIds { get; set; } = new();
+
+        [JsonIgnore]
         public List<Guid> AttachmentIds { get; set; } = new();
+
         public int OrderIndex { get; set; }
     }
 }

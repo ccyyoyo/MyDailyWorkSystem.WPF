@@ -2,14 +2,15 @@
 {
     public enum TaskType
     {
-        Feature = 0,
-        Bug = 1,
-        Improvement = 2,
-        Research = 3,
-        Visit = 4,
-        Contract = 5,
-        Adminstration = 6,
-        Communication = 7,
-        Documentation = 8
+        None = 0,
+        Feature = 1,
+        Bug = 2,
+        Improvement = 3,
+        Research = 4,
+        Visit = 5,
+        Contract = 6,
+        Adminstration = 7,
+        Communication = 8,
+        Documentation = 9
     }
 }
