@@ -1,13 +1,9 @@
-﻿using System.Text;
+﻿using Microsoft.Extensions.DependencyInjection;
+using MyDailyWorkSystem.Core.Services;
+using MyDailyWorkSystem.Domain.Enums;
+using MyDailyWorkSystem.Domain.Models;
+using MyDailyWorkSystem.WPF.ViewModels;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace MyDailyWorkSystem.WPF
 {
@@ -16,9 +12,25 @@ namespace MyDailyWorkSystem.WPF
     /// </summary>
     public partial class MainWindow : Window
     {
+
+
         public MainWindow()
         {
+            var taskService = App.AppHost.Services.GetRequiredService<ITaskService>();
+            taskService.CreateTask(new TaskItem { Title = "測試任務" , Priority = TaskPriority.High });
+
             InitializeComponent();
+        }
+
+        private void OpenTasks_Click(object sender , RoutedEventArgs e)
+        {
+            var vm = App.AppHost.Services.GetRequiredService<TaskListViewModel>();
+            vm.LoadTasks();
+
+            var view = App.AppHost.Services.GetRequiredService<TaskListView>();
+            view.DataContext = vm;
+
+            MainContentArea.Content = view;
         }
     }
 }
