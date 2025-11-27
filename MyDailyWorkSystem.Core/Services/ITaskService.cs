@@ -2,7 +2,7 @@
 
 namespace MyDailyWorkSystem.Core.Services
 {
-    internal interface ITaskService
+    public interface ITaskService
     {
         TaskItem CreateTask(TaskItem task);
         TaskItem? GetTaskById(Guid id);
