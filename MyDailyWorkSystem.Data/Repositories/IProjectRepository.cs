@@ -1,10 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using MyDailyWorkSystem.Domain.Models;
 
 namespace MyDailyWorkSystem.Data.Repositories
 {
-    internal interface IProjectRepository
+    public interface IProjectRepository
     {
+        ProjectItem InsertProject(ProjectItem project);
+
+        ProjectItem? GetProjectById(Guid id);
+
+        List<ProjectItem> GetAllProjects();
+
+        void UpdateProject(ProjectItem project);
+
+        void DeleteProject(Guid id);
     }
 }

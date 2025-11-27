@@ -1,10 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using MyDailyWorkSystem.Domain.Models;
 
 namespace MyDailyWorkSystem.Data.Repositories
 {
-    internal interface INoteRepository
+    public interface INoteRepository
     {
+        NoteItem InsertNote(NoteItem note);
+        NoteItem? GetNoteById(Guid id);
+        List<NoteItem> GetAllNotes();
+        void UpdateNote(NoteItem note);
+        void DeleteNote(Guid id);
     }
 }
