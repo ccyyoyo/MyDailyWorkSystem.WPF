@@ -1,18 +1,15 @@
 ﻿using Dapper;
 using MyDailyWorkSystem.Data.Database;
+using MyDailyWorkSystem.Domain.Enums;
 using MyDailyWorkSystem.Domain.Models;
 using System.Text.Json;
 
 namespace MyDailyWorkSystem.Data.Repositories
 {
-    public class TaskRepository : ITaskRepository
+    public class TaskRepository : BaseRepository, ITaskRepository
     {
-        private readonly SQLiteConnectionFactory _factory;
-
-        public TaskRepository(SQLiteConnectionFactory factory)
-        {
-            _factory = factory;
-        }
+        public TaskRepository(IDataConnectionFactory factory)
+         : base(factory) { }
 
         public TaskItem InsertTask(TaskItem task)
         {
@@ -73,7 +70,7 @@ namespace MyDailyWorkSystem.Data.Repositories
             using var connection = _factory.GetConnection();
 
             connection.Execute(
-                "DELETE FROM Tasks WHERE Id = @Id;",
+                "DELETE FROM Tasks WHERE Id = @Id;" ,
                 new { Id = id });
         }
 
@@ -89,11 +86,10 @@ namespace MyDailyWorkSystem.Data.Repositories
                 FROM Tasks
                 ORDER BY CreatedAt DESC;
                 """;
-            var tasks = connection.Query<TaskItem>(query);
+            var tasks = connection.Query<TaskDto>(query);
 
             var list = tasks.ToList();
-            list.ForEach(DeserializeLists);
-            return list;
+            return list.Select(DeserializeLists).ToList();
         }
 
         public TaskItem? GetTaskById(Guid id)
@@ -108,10 +104,10 @@ namespace MyDailyWorkSystem.Data.Repositories
                 FROM Tasks
                 WHERE Id = @Id;
                 """;
-            var task = connection.QuerySingleOrDefault<TaskItem>(query , new { Id = id });
-            if ( task == null )
+            var dto = connection.QuerySingleOrDefault<TaskDto>(query , new { Id = id });
+            if ( dto == null )
                 return null;
-            DeserializeLists(task);
+            var task = DeserializeLists(dto);
             return task;
         }
 
@@ -143,32 +139,50 @@ namespace MyDailyWorkSystem.Data.Repositories
                     AttachmentIds = @AttachmentIds,
                     OrderIndex = @OrderIndex
                 WHERE Id = @Id;
-                """,
+                """ ,
                 new
                 {
-                    task.Id,
-                    task.UpdatedAt,
-                    task.Title,
-                    task.Notes,
-                    task.Type,
-                    task.Priority,
-                    task.State,
-                    task.DueDate,
-                    task.EstimatedHours,
-                    task.ActualFinishTime,
-                    task.ProjectId,
-                    task.CreatorUserId,
-                    task.AssignedToUserId,
-                    TagIds = tagJson,
-                    AttachmentIds = attachmentJson,
+                    task.Id ,
+                    task.UpdatedAt ,
+                    task.Title ,
+                    task.Notes ,
+                    task.Type ,
+                    task.Priority ,
+                    task.State ,
+                    task.DueDate ,
+                    task.EstimatedHours ,
+                    task.ActualFinishTime ,
+                    task.ProjectId ,
+                    task.CreatorUserId ,
+                    task.AssignedToUserId ,
+                    TagIds = tagJson ,
+                    AttachmentIds = attachmentJson ,
                     task.OrderIndex
                 });
         }
 
-        private static void DeserializeLists(TaskItem task)
+        private static TaskItem DeserializeLists(TaskDto dto)
         {
-            task.TagIds = DeserializeGuidList(task.TagIdsJson);
-            task.AttachmentIds = DeserializeGuidList(task.AttachmentIdsJson);
+            return new TaskItem
+            {
+                Id = Guid.Parse(dto.Id) ,
+                CreatedAt = DateTime.Parse(dto.CreatedAt) ,
+                UpdatedAt = DateTime.Parse(dto.UpdatedAt) ,
+                Title = dto.Title ,
+                Notes = dto.Notes ,
+                Type = (TaskType)dto.Type ,
+                Priority = (TaskPriority)dto.Priority ,
+                State = (TaskState)dto.State ,
+                DueDate = dto.DueDate == null ? null : DateTime.Parse(dto.DueDate) ,
+                EstimatedHours = (uint?)dto.EstimatedHours ,
+                ActualFinishTime = dto.ActualFinishTime == null ? null : DateTime.Parse(dto.ActualFinishTime) ,
+                ProjectId = dto.ProjectId == null ? null : Guid.Parse(dto.ProjectId) ,
+                CreatorUserId = dto.CreatorUserId == null ? null : Guid.Parse(dto.CreatorUserId) ,
+                AssignedToUserId = dto.AssignedToUserId == null ? null : Guid.Parse(dto.AssignedToUserId) ,
+                TagIds = dto.TagIds == null ? new() : JsonSerializer.Deserialize<List<Guid>>(dto.TagIds) ,
+                AttachmentIds = dto.AttachmentIds == null ? new() : JsonSerializer.Deserialize<List<Guid>>(dto.AttachmentIds) ,
+                OrderIndex = dto.OrderIndex
+            };
         }
 
         private static List<Guid> DeserializeGuidList(string? json)

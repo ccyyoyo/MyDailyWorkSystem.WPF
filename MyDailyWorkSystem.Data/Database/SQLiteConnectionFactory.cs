@@ -1,56 +1,57 @@
-﻿using Microsoft.Data.Sqlite;
-using System;
-using System.Collections.Generic;
-using System.Data.SqlTypes;
-using System.Text;
+using Microsoft.Data.Sqlite;
 
 namespace MyDailyWorkSystem.Data.Database
 {
-    //1.持有資料庫檔案路徑
-
-    //2.檢查資料庫是否存在
-    //　→ 若不存在則建立（SQLite 可以直接建立新檔案）
-
-    //3.建立 SQLiteConnection 實例
-
-    //4.回傳開啟好的連線給 Repository 使用
-
-    public class SQLiteConnectionFactory
+    public class SQLiteConnectionFactory : IDataConnectionFactory
     {
-        // 修正屬性語法錯誤，改用私有欄位搭配公開屬性
-        private string _databasePath = "C:\\Users\\<你>\\AppData\\Local\\MyDailyWorkSystem\\database.db";
-        public string DatabasePath
-        {
-            get => _databasePath;
-            set => _databasePath = value;
-        }
+        private static readonly string AppFolder =
+            Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) ,
+                         "MyDailyWorkSystem");
+
+        private static readonly string DefaultDatabasePath =
+            Path.Combine(AppFolder , "database.db");
+
+        public string DatabasePath { get; }
+
+        public SQLiteConnectionFactory() : this(DefaultDatabasePath) { }
 
         public SQLiteConnectionFactory(string databasePath)
         {
             DatabasePath = databasePath;
+            EnsureDirectoryExists(Path.GetDirectoryName(DatabasePath));
         }
 
         public SqliteConnection GetConnection()
         {
-            // 檢查資料庫檔案是否存在，若不存在則建立
-            if (!System.IO.File.Exists(DatabasePath))
+            var builder = new SqliteConnectionStringBuilder
             {
-                EnsureDirectoryExists(System.IO.Path.GetDirectoryName(DatabasePath));
-            }
+                DataSource = DatabasePath ,
+                Mode = SqliteOpenMode.ReadWriteCreate ,
+                Cache = SqliteCacheMode.Shared
+            };
 
-            var conn = new SqliteConnection($"Data Source={DatabasePath}");
+            var conn = new SqliteConnection(builder.ConnectionString);
             conn.Open();
+
+            // �[�tŪ�g & �קK locked
+            EnableWAL(conn);
+
             return conn;
         }
 
-        private void EnsureDirectoryExists(string directoryPath)
+        private void EnableWAL(SqliteConnection conn)
         {
-            if (!System.IO.Directory.Exists(directoryPath))
+            using var cmd = conn.CreateCommand();
+            cmd.CommandText = "PRAGMA journal_mode=WAL;";
+            cmd.ExecuteNonQuery();
+        }
+
+        private void EnsureDirectoryExists(string? path)
+        {
+            if ( !string.IsNullOrWhiteSpace(path) && !Directory.Exists(path) )
             {
-                System.IO.Directory.CreateDirectory(directoryPath);
+                Directory.CreateDirectory(path);
             }
         }
     }
-
-
 }
