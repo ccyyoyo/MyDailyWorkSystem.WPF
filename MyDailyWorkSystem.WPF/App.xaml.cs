@@ -22,9 +22,13 @@ namespace MyDailyWorkSystem.WPF
                     services.AddSingleton<DatabaseInitializer>();
 
                     services.AddSingleton<ITaskRepository , TaskRepository>();
+                    services.AddSingleton<IProjectRepository , ProjectRepository>();
+                    services.AddSingleton<INoteRepository , NoteRepository>();
 
                     // ====== 註冊 Service 層 ======
                     services.AddSingleton<ITaskService , TaskService>();
+                    services.AddSingleton<IProjectService , ProjectService>();
+                    services.AddSingleton<INoteService , NoteService>();
 
                     // ====== 註冊 ViewModels ======
                     services.AddTransient<TaskListViewModel>();

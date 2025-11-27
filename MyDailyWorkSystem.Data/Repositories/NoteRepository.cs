@@ -119,7 +119,7 @@ namespace MyDailyWorkSystem.Data.Repositories
 
                 RelatedProjectIds = JsonSerializer.Deserialize<List<Guid>>(dto.RelatedProjectIds ?? "[]")! ,
                 RelatedTaskIds = JsonSerializer.Deserialize<List<Guid>>(dto.RelatedTaskIds ?? "[]")! ,
-                RelatedPeople = JsonSerializer.Deserialize<List<Guid>>(dto.RelatedPeople ?? "[]")! ,
+                RelatedPeople = JsonSerializer.Deserialize<List<string>>(dto.RelatedPeople ?? "[]")! ,
 
                 TagIds = JsonSerializer.Deserialize<List<Guid>>(dto.TagIds ?? "[]")! ,
                 AttachmentIds = JsonSerializer.Deserialize<List<Guid>>(dto.AttachmentIds ?? "[]")! ,
